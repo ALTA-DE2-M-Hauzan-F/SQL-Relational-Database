@@ -1,34 +1,101 @@
 1) Create database alta_online_shop.
-Sulisi SQL:
+Sulisi SQL: create database alta_online_shop;
 
 2) Dari schema Olshop yang telah kamu kerjakan di, Implementasikanlah menjadi table pada MySQL.
     2.a Create table user
     Sulisi SQL:
+	create table users(
+	id serial,
+	username character varying(32) NOT NULL,
+    fullname character varying(255) NOT NULL,
+	email character varying(255) NOT NULL,
+    password character varying(64) NOT NULL,
+	created_at timestamp without time zone NOT NULL DEFAULT(NOW()),
+    updated_at timestamp without time zone NOT NULL DEFAULT(NOW()),
+	location text,
+	gender character varying(1) NOT NULL
+	PRIMARY KEY (id));
 
     2.b Create table product, product_type, product_description, payment_method.
     Sulisi SQL:
 
+	create table products(
+		product_id bigint NOT NULL,
+		product_cat character varying(255) NOT NULL,
+		product_name character varying(255) NOT NULL);
+
+	create table product_type(
+		cat_id bigint NOT NULL,
+		product_id bigint NOT NULL,
+		category character varying(255) NOT NULL);
+
+	create table product_description(
+		prod_desc_id bigint NOT NULL,
+		description character varying(255) NOT NULL,
+		unit character varying(32) NOT NULL,
+		qty numeric(50,2) not null,
+		price numeric(50,2) not null,
+		product_id bigint NOT NULL,
+		discount type numeric(50,2),
+		tax type numeric(50,2));
+
+	create table payment_method(
+		payment_id bigint NOT NULL,
+		product_id bigint NOT NULL,
+		pay_option character varying(255) NOT NULL,
+		is_cash boolean,
+		user_id bigint NOT NULL	);
+
     3.c Create table transaction, transaction detail.
     Sulisi SQL:
 
+	create table transactions(
+		trans_id serial,
+		user_id bigint NOT NULL,
+		payment_id bigint NOT NULL,
+		product_id bigint NOT NULL,
+		PRIMARY KEY (trans_id));
+
+	create table transaction_details(
+		trans_detail_id serial,
+		trans_id bigint NOT NULL,
+		user_id bigint NOT NULL,
+		prod_desc_id bigint NOT NULL,
+		payment_id bigint NOT NULL,
+		total_price numeric(50,2),
+		user_paid numeric(50,2),
+		user_charge numeric(50,2),
+		paid_created_at timestamp without time zone NOT NULL DEFAULT(NOW()),
+		qty bigint,
+		product_id bigint,
+		PRIMARY KEY (trans_detail_id));
+
 3) Create table kurir dengan field id, name, created_at, updated_at.
 Sulisi SQL:
+	create table kurir(
+		id serial,
+    		name character varying(255) NOT NULL,
+		created_at timestamp without time zone NOT NULL DEFAULT(NOW()),
+    		updated_at timestamp without time zone NOT NULL DEFAULT(NOW()),
+		PRIMARY KEY (id));
 
 4) Tambahkan ongkos_dasar column di tabel kurir.
-Sulisi SQL:
+Sulisi SQL: alter table kurir add column ongkos_dasar bigint not null;
 
 5) Rename tabel kurir menjadi shipping.
-Sulisi SQL:
+Sulisi SQL: alter table kurir rename to shipping;
 
 6) Hapus / Drop tabel shipping karena ternyata tidak dibutuhkan.
-Sulisi SQL:
+Sulisi SQL: drop table shipping;
 
 7) Silahkan menambahkan entity baru dengan relation 1-to-1, 1-to-many, many-to-many. Seperti:
     7.a) 1-to-1: payment_method dengan description.
-    Sulisi SQL:
+    Sulisi SQL: products.product_id dengan product_description.description,
+		products.product_id dengan product_type.product_name
 
     7.b) 1-to-many: user dengan alamat.
-    Sulisi SQL:
+    Sulisi SQL: users.id dengan transactions.user_id,
+		transactions.product_id dengan products.product_name
 
     7.c) many-to-many: user dengan payment_method menjadi user_payment_method_detail.
-    Sulisi SQL:
+    Sulisi SQL: users.id dengan transaction_details.trans_id 
